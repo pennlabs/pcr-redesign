@@ -2,7 +2,10 @@ import re
 from django.db import models
 from django.shortcuts import reverse
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> Removed absolute_url
 class Semester:
     """ A semester, with a calendar year and a season.
     Season codes: (a,b,c) -> (Spring, Summer, Fall)
@@ -50,8 +53,16 @@ class Semester:
     def __str__(self):
         return "%s %d" % (["Spring", "Summer", "Fall"][self.semesternum], self.year)
 
+<<<<<<< HEAD
     def get_absolute_url(self):
         return reverse("semester", kwargs={"semester_code": self.code()})
+=======
+    def __cmp__(self, other):
+        if other:
+            return cmp(self.id, other.id)
+        else:
+            return 1  # arbitrarily, if other is given as ''
+>>>>>>> Removed absolute_url
 
     def semesterFromID(id):
         """ Given a numerical semester ID, return a semester. """
@@ -137,28 +148,6 @@ class Department(models.Model):
         tokens.append(self.code.lower())
         return tokens
 
-    @property
-    def datum(self):
-        """Response format for search queries.
-
-        >>> d = Department.objects.create(code="ECON", name="Economics")
-        >>> d.datum == {'tokens': ['economics', 'econ'],
-        ...             'path': '/depts/econ',
-        ...             'id': 'ECON',
-        ...             'value': 'Economics'}
-        True
-        >>> d.delete()
-        """
-        return {'value': self.name,
-                'tokens': self.tokens,
-                'path': self.get_absolute_url(),
-                'id': self.code,
-                }
-
-    def get_absolute_url(self):
-        # don't know actual semester
-        return reverse("department", kwargs={"dept_code": self.code})
-
 
 class CourseHistory(models.Model):
     """A course, as it has existed for many semesters. Various courses
@@ -176,9 +165,6 @@ class CourseHistory(models.Model):
         # TODO: shadowing (IE, CIS 260 is not used by another course, don't alias
         # me that way.
         return Alias.objects.filter(course__history=self).only('coursenum', 'department__name')
-
-    def get_absolute_url(self):
-        return reverse("history", kwargs={"histid": self.id})
 
     # name_override: string, or None
     # aliases_override: list of (dept, num) tuple pairs, or None
@@ -239,9 +225,6 @@ class Course(models.Model):
         tokens.extend(self.name.lower().split())
         return tokens
 
-    def get_absolute_url(self):
-        return reverse("course", kwargs={"courseid": self.id})
-
     @property
     def code(self):
         return '%s-%03d' % (self.primary_alias.department_id,
@@ -250,36 +233,6 @@ class Course(models.Model):
     def getAliases(self):
         return ["%s-%03d" % (x.department_id, x.coursenum)
                 for x in self.alias_set.all()]
-
-    @property
-    def datum(self):
-        """Response format for search queries.
-        >>> d = Department.objects.create(code="econ")
-        >>> desc = "Topics in microeconomics."
-        >>> c = Course.objects.create(name="INTRO TO MICRO", description=desc)
-        >>> alias = Alias.objects.create(department=d, course=c, coursenum=001)
-        >>> c.primary_alias = alias
-        >>> c.datum == {'tokens': ['econ001', 'econ-001', 'econ', '001', 'intro', 'to', 'micro'],
-        ...             'path': '/courses/1',
-        ...             'name': 'INTRO TO MICRO',
-        ...             'value': 'econ-001',
-        ...             'aliases': ['econ-001'],
-        ...             'semester': '1740A',
-        ...             'description': 'Topics in microeconomics.'}
-        True
-        >>> alias.delete()
-        >>> c.delete()
-        >>> d.delete()
-        """
-        return {
-            'value': self.code,
-            'name': self.name,
-            'tokens': self.tokens,
-            'path': self.get_absolute_url(),
-            'description': self.description,
-            'semester': self.semester.code(),
-            'aliases': self.getAliases(),
-        }
 
 
 class Instructor(models.Model):
@@ -314,28 +267,8 @@ class Instructor(models.Model):
         name = self.name or ""
         return name.lower().split()
 
-    def get_absolute_url(self):
-        return reverse("instructor", kwargs={"instructor_id": self.temp_id})
-
     def __unicode__(self):
         return self.name
-
-    @property
-    def datum(self):
-        """Response format for search queries.
-
-        >>> i = Instructor.objects.create(first_name="Uriel", last_name="Spiegel")
-        >>> i.datum == {'tokens': ['uriel', 'spiegel'],
-        ...             'path': '/instructors/1-Uriel-Spiegel',
-        ...             'value': 'Uriel Spiegel'}
-        True
-        >>> i.delete()
-        """
-        return {
-            'value': self.name,
-            'tokens': self.tokens,
-            'path': self.get_absolute_url(),
-        }
 
 
 class Alias(models.Model):
@@ -398,9 +331,6 @@ class Section(models.Model):
     def __unicode__(self):
         return "%s-%03d " % (self.course, self.sectionnum)
 
-    def get_absolute_url(self):
-        return reverse("section", kwargs={"courseid": self.course_id, "sectionnum": self.sectionnum})
-
     class Meta:
         """ To hold uniqueness constraint """
         unique_together = (("course", "sectionnum"),)
@@ -434,10 +364,6 @@ class Review(models.Model):
 
     def __unicode__(self):
         return "Review for %s" % str(self.section)
-
-    def get_absolute_url(self):
-        pennkey = self.instructor.temp_id if self.instructor else "99999-JAIME-MUNDO"
-        return reverse("review", kwargs={"courseid": self.section.course_id, "sectionnum": self.section.sectionnum, "instructor_id": pennkey})
 
 
 class ReviewBit(models.Model):
