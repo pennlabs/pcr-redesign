@@ -1,5 +1,7 @@
 db.sqlite3
 
+*.swp
+*.swo
 .DS_Store
 
 *.py[cod]

@@ -18,8 +18,4 @@ urlpatterns = [
     path('/about', views.about, name="about"),
     path('/cart', views.cart, name="cart"),
     path('/faq', views.faq, name="faq"),
-
-    #api TO BE MOVED TO ITS OWN Directory
-    path('/api', views.api, name="api"),
-
 ]
