@@ -2,7 +2,6 @@ import re
 from django.db import models
 from django.shortcuts import reverse
 
-# Note: each class has get_absolute_url - this is for "url" when queried
 
 class Semester:
     """ A semester, with a calendar year and a season.
@@ -53,12 +52,6 @@ class Semester:
 
     def get_absolute_url(self):
         return reverse("semester", kwargs={"semester_code": self.code()})
-
-    def __cmp__(self, other):
-        if other:
-            return cmp(self.id, other.id)
-        else:
-            return 1  # arbitrarily, if other is given as ''
 
     def semesterFromID(id):
         """ Given a numerical semester ID, return a semester. """

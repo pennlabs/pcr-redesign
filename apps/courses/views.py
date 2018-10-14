@@ -11,17 +11,17 @@ def course(request, code):
 def department(request, code):
     pass
 
-def autocomplete_data(request):
+def autocomplete(request):
     pass
 
 def about(request):
-    return render(request, "about.html")
+    return render(request, 'about.html')
 
 def faq(request):
-    return render(request, "faq.html")
+    return render(request, 'faq.html')
 
 def cart(request):
-    return render(request, "cart.html")
+    return render(request, 'cart.html')
 
 def logout(request):
-    return redirect("https://idp.pennkey.upenn.edu/logout")
+    return redirect('https://idp.pennkey.upenn.edu/logout')
