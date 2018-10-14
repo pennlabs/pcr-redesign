@@ -1,5 +1,9 @@
 from django.urls import path, include
 from django.views.generic.base import TemplateView
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0d2af0dd2c0766e607e9259d31ca0389bf75fe5d
 
 urlpatterns = [
     path(r'/', TemplateView.as_view(template_name="index.html"), name="index"),
