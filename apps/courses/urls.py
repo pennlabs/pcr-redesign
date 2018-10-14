@@ -1,11 +1,12 @@
 from django.urls import path, include
+from django.views.generic.base import TemplateView
 
 urlpatterns = [
     path(r'/', TemplateView.as_view(template_name="index.html"), name="index"),
 
     #pcr_detail urls
-    path('instructor/<ID-NAME>', views.instructor, name="instructor"),
-    path('course/<DEPT-CODE>', views.course, name="course"),
+    path('instructor/<ID_NAME>', views.instructor, name="instructor"),
+    path('course/<DEPT_CODE>', views.course, name="course"),
     path('department/<DEPT>', views.department, name="department"),
 
     #searchbar URLs
@@ -17,7 +18,7 @@ urlpatterns = [
     path('/cart', views.cart, name="cart"),
     path('/faq', views.faq, name="faq"),
 
-    #api TO BE MOVED TO ITS OWN Directory
-    path('/api', views.api, name="api"),
+    #/api TO BE MOVED TO ITS OWN Directory
+    # path('/api', views.api, name="api"),
 
 ]
