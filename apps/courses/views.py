@@ -2,16 +2,16 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 
 # Create your views here.
-def instructor(request, id):
+def instructor(request, name):
     pass
 
-def course(request, title):
+def course(request, code):
     pass
 
-def department(request, name):
+def department(request, code):
     pass
 
-def autocomplete_data(request, start=None):
+def autocomplete_data(request):
     pass
 
 def about(request):
