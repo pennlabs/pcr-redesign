@@ -21,8 +21,11 @@ urlpatterns = [
     path('/about', views.about, name="about"),
     path('/cart', views.cart, name="cart"),
     path('/faq', views.faq, name="faq"),
+<<<<<<< HEAD
 
     #/api TO BE MOVED TO ITS OWN Directory
     # path('/api', views.api, name="api"),
 
+=======
+>>>>>>> b36c3cd25264c3d1887fbe93a6c144abef9f79c9
 ]
