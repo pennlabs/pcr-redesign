@@ -12,7 +12,7 @@ jobs:
                 name: install python dependencies
                 command: pipenv sync --dev
             - save_cache:
-                keys: v1-dependencies-{{ checksum "Pipfile.lock" }}
+                key: v1-dependencies-{{ checksum "Pipfile.lock" }}
                 paths:
                     - ~/.local
                     - ~/.cache
