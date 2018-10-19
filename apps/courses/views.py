@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
+<<<<<<< HEAD
 from .models import Instructor, CourseHistory, Department
 from collections import OrderedDict
 # Create your views here.
@@ -63,18 +64,37 @@ def department(request, name):
         'type': 'department',
     }
     return render(request, 'detail/department.html', context)
+=======
+
+
+def instructor(request, name):
+    pass
+
+
+def course(request, code):
+    pass
+
+
+def department(request, code):
+    pass
+>>>>>>> 45a8617fe6af48507beae8f0651b232c45343084
+
 
 def autocomplete(request):
     pass
 
+
 def about(request):
     return render(request, 'about.html')
+
 
 def faq(request):
     return render(request, 'faq.html')
 
+
 def cart(request):
     return render(request, 'cart.html')
+
 
 def logout(request):
     return redirect('https://idp.pennkey.upenn.edu/logout')

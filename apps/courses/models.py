@@ -2,10 +2,7 @@ import re
 from django.db import models
 from django.shortcuts import reverse
 
-<<<<<<< HEAD
 
-=======
->>>>>>> Removed absolute_url
 class Semester:
     """ A semester, with a calendar year and a season.
     Season codes: (a,b,c) -> (Spring, Summer, Fall)
@@ -53,17 +50,7 @@ class Semester:
     def __str__(self):
         return "%s %d" % (["Spring", "Summer", "Fall"][self.semesternum], self.year)
 
-<<<<<<< HEAD
-    def get_absolute_url(self):
-        return reverse("semester", kwargs={"semester_code": self.code()})
-=======
-    def __cmp__(self, other):
-        if other:
-            return cmp(self.id, other.id)
-        else:
-            return 1  # arbitrarily, if other is given as ''
->>>>>>> Removed absolute_url
-
+    @staticmethod
     def semesterFromID(id):
         """ Given a numerical semester ID, return a semester. """
         if isinstance(id, Semester):
@@ -101,14 +88,14 @@ class SemesterField(models.Field):
                 tmp_season, tmp_year = value.split(" ")
                 if tmp_season in seasons:
                     return Semester(tmp_year, "abc"[seasons.index(tmp_season)])
-            except:
+            except KeyError:
                 pass
         try:
             id = int(value)
         except ValueError as e:
             raise e
         else:
-            return semesterFromID(id)
+            return Semester.semesterFromID(id)
 
     def from_db_value(self, value, expression, connection, context):
         return self.to_python(value)
@@ -323,7 +310,7 @@ class Section(models.Model):
     SRT senior thesis
     STU studio
     """
-    #and a few others, online course, NSO proseminar, SCUE preceptorial
+    # and a few others, online course, NSO proseminar, SCUE preceptorial
 
     # need to allow nulls for when importing from registrat
     oldpcr_id = models.IntegerField(null=True)
