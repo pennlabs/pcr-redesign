@@ -50,6 +50,7 @@ class Semester:
     def __str__(self):
         return "%s %d" % (["Spring", "Summer", "Fall"][self.semesternum], self.year)
 
+    @staticmethod
     def semesterFromID(id):
         """ Given a numerical semester ID, return a semester. """
         if isinstance(id, Semester):
@@ -87,14 +88,14 @@ class SemesterField(models.Field):
                 tmp_season, tmp_year = value.split(" ")
                 if tmp_season in seasons:
                     return Semester(tmp_year, "abc"[seasons.index(tmp_season)])
-            except:
+            except KeyError:
                 pass
         try:
             id = int(value)
         except ValueError as e:
             raise e
         else:
-            return semesterFromID(id)
+            return Semester.semesterFromID(id)
 
     def from_db_value(self, value, expression, connection, context):
         return self.to_python(value)
@@ -309,7 +310,7 @@ class Section(models.Model):
     SRT senior thesis
     STU studio
     """
-    #and a few others, online course, NSO proseminar, SCUE preceptorial
+    # and a few others, online course, NSO proseminar, SCUE preceptorial
 
     # need to allow nulls for when importing from registrat
     oldpcr_id = models.IntegerField(null=True)
