@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+{% load infobox %}
+{% load scoretable %}
+{% load prettify %}
+{% load templates %}
+
+{% block title %}
+  Penn Course Review - {{title}}
+{% endblock %}
+
+{% block css %}
+  <link rel="stylesheet" type="text/css" href="{% static "css/jquery.dataTables.min.css" %}" />
+  <link rel="stylesheet" type="text/css" href="{% static "css/select.dataTables.min.css" %}" />
+  <link rel="stylesheet" type="text/css" href="{% static "css/buttons.dataTables.min.css" %}" />
+  <link rel="stylesheet" type="text/css" href="{% static "css/reviews.css" %}" />
+{% endblock %}
+
+{% block js %}
+  <script src="{% static "js/jquery.dataTables.min.js" %}"></script>
+  <script src="{% static "js/dataTables.select.min.js" %}"></script>
+  <script src="{% static "js/dataTables.buttons.min.js" %}"></script>
+  <script src="{% static "js/reviews.js" %}"></script>
+{% endblock %}
+
+{% block banner-content %}
+  <div id="banner-info" data-type="{{ type }}">
+    {% infobox item %}
+  </div>
+  {% include "detail/scorecard.html" %}
+{% endblock %}
+
+{% block content-content %}
+<div class="box clearfix">
+  {% scoretable item %}
+</div>
+{% endblock %}
