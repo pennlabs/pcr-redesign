@@ -309,7 +309,7 @@ class Section(models.Model):
     SRT senior thesis
     STU studio
     """
-    #and a few others, online course, NSO proseminar, SCUE preceptorial
+    # and a few others, online course, NSO proseminar, SCUE preceptorial
 
     # need to allow nulls for when importing from registrat
     oldpcr_id = models.IntegerField(null=True)
