@@ -87,7 +87,7 @@ class SemesterField(models.Field):
                 tmp_season, tmp_year = value.split(" ")
                 if tmp_season in seasons:
                     return Semester(tmp_year, "abc"[seasons.index(tmp_season)])
-            except:
+            except KeyError:
                 pass
         try:
             id = int(value)
