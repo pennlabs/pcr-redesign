@@ -1,0 +1,27 @@
+version: 2
+jobs:
+    build:
+        docker:
+            - image: circleci/python:3.6.5
+        steps:
+            - checkout
+            - restore_cache:
+                keys:
+                    - v1-dependencies-{{ checksum "Pipfile.lock" }}
+            - run:
+                name: install python dependencies
+                command: pipenv sync --dev
+            - save_cache:
+                keys: v1-dependencies-{{ checksum "Pipfile.lock" }}
+                paths:
+                    - ~/.local
+                    - ~/.cache
+            - run:
+                name: style check
+                command: pipenv run flake8 --exclude=*/migrations/*,venv --ignore=E501,E401 .
+            - run:
+                name: run tests
+                command: pipenv run ./manage.py test
+            - store_artifacts:
+                path: test-reports
+                destination: test-reports
