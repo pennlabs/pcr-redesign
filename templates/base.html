@@ -97,7 +97,13 @@
 
     <div id="footer">
       <div id="footer-inner" class="container_12">
-        <!-- TODO: links??? -->
+        <a href="{% url "about" %}">About</a>
+        <span>|</span>
+        <a href="{% url "faq" %}">FAQs</a>
+        <span>|</span>
+        <a href="https://docs.google.com/spreadsheet/viewform?formkey=dFNZYW92cFM1YnpKUzlLcXRDZVQ4VGc6MQ#gid=0faq">Feedback</a>
+        <span>|</span>
+        <a href="{% url "logout" %}">Logout</a>
         <p id="copyright">
           <!--[if IE 8]>
           <span style="color:#CC0000;">Best viewed in Chrome or Firefox. </span>
