@@ -50,6 +50,7 @@ class Semester:
     def __str__(self):
         return "%s %d" % (["Spring", "Summer", "Fall"][self.semesternum], self.year)
 
+    @staticmethod
     def semesterFromID(id):
         """ Given a numerical semester ID, return a semester. """
         if isinstance(id, Semester):
@@ -94,7 +95,7 @@ class SemesterField(models.Field):
         except ValueError as e:
             raise e
         else:
-            return semesterFromID(id)
+            return Semester.semesterFromID(id)
 
     def from_db_value(self, value, expression, connection, context):
         return self.to_python(value)
