@@ -1,10 +1,6 @@
-<!-- Override "block" from detail.html -->
 {% extends "base.html" %}
 {% load static %}
-{% load infobox %}
-{% load scoretable %}
-{% load prettify %}
-{% load templates %}
+<!-- TODO: infobox, scoretable, prettify, templates -->
 
 {% block title %}
   Penn Course Review - {{title}}
@@ -21,22 +17,110 @@
   <script src="{% static "js/jquery.dataTables.min.js" %}"></script>
   <script src="{% static "js/dataTables.select.min.js" %}"></script>
   <script src="{% static "js/dataTables.buttons.min.js" %}"></script>
+  {% if type == 'department' %}
+  <script src="{% static "js/chart.min.js" %}"></script>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  {% endif %}
   <script src="{% static "js/reviews.js" %}"></script>
 {% endblock %}
 
+<style>
+/* .axis .domain {
+display: none;
+} */
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.axis--x path {
+  display: none;
+}
+
+.bar:hover {
+  background-color: #000000;
+  opacity: 0.8;
+}
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+
+
+form {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  position: absolute;
+  left: 10px;
+  top: 10px;
+}
+
+label {
+  display: block;
+}
+
+</style>
+
 {% block banner-content %}
   <div id="banner-info" data-type="{{ type }}">
-    {% infobox item %}
+  <!-- TODO: nfobox item -->
   </div>
-  {% include "pcr_detail/scorecard.html" %}
+  {% if type == 'department' %}
+    <div id="row-select-placeholder">
+        <object type="image/svg+xml" data="{% static 'image/selectrow.svg' %}">
+            <img src="{% static 'image/selectrow.svg' %}" />
+        </object>
+        <div id="row-select-text">Select a few rows to begin comparing courses.</div>
+    </div>
+    <div id="row-select-chart-container">
+      <form>
+        <label><input type="radio" name="mode" value="stacked" checked> Stacked</label>
+        <label><input type="radio" name="mode" value="grouped"> Grouped</label>
+      </form>
+        <!-- <canvas id="row-select-chart"></canvas> -->
+        <svg id="row-select-chart" width="300" height="500"></svg>
+        <button id="chart-clear" class="btn btn-action">Clear Chart</button>
+    </div>
+  {% else %}
+    {% include "detail/scorecard.html" %}
+  {% endif %}
+  {% ifequal type 'course' %}
   <p class="desc">{{item.description|default_if_none:""}}</p>
   <script src="{% static "js/loader.js" %}"></script>
+  {% endifequal %}
 {% endblock %}
 
 {% block content-content %}
 <div class="box clearfix">
-  {% scoretable item %}
+  <!-- TODO: scoretable item -->
 </div>
+{% ifequal type 'course' %}
 <div id="course-details" class="box clearfix">
   <div id="select-prof">
     <div>
@@ -61,4 +145,5 @@
     </div>
   </div>
 </div>
+{% endifequal %}
 {% endblock %}
