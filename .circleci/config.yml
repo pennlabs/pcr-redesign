@@ -17,10 +17,13 @@ jobs:
                     - ~/.local
                     - ~/.cache
             - run:
-                name: style check
+                name: Style check
                 command: pipenv run flake8 --exclude=*/migrations/*,venv --ignore=E501,F401 .
             - run:
-                name: run tests
+                name: Run migrations
+                command: pipenv run ./manage.py migrate
+            - run:
+                name: Run tests
                 command: pipenv run ./manage.py test
             - store_artifacts:
                 path: test-reports
