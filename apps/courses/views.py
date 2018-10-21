@@ -1,9 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
-<<<<<<< HEAD
-from .models import Instructor, CourseHistory, Department
+
+from .models import Instructor, Review, Department, CourseHistory
 from collections import OrderedDict
-# Create your views here.
+
 
 def instructor(request, id):
     instructor = Instructor(id)
@@ -51,22 +51,6 @@ def course(request, title):
     return render(request, 'detail/course.html', context)
 
 
-def department(request, name):
-    department = Department(name)
-    context = {
-        'item': department,
-        'reviews': set(review for coursehistory in department.coursehistories
-                       for course in coursehistory.courses
-                       for section in course.sections
-                       for review in section.reviews),
-        'title': name,
-        'show_name': True,
-        'type': 'department',
-    }
-    return render(request, 'detail/department.html', context)
-=======
-
-
 def instructor(request, name):
     pass
 
@@ -76,8 +60,13 @@ def course(request, code):
 
 
 def department(request, code):
-    pass
->>>>>>> 45a8617fe6af48507beae8f0651b232c45343084
+    department = get_object_or_404(Department, code=code)
+    context = {
+        'item': department,
+        'title': department.code,
+        'reviews': Review.objects.filter(section__course__primary_alias__department=department),
+    }
+    return render(request, 'detail/department.html', context)
 
 
 def autocomplete(request):
