@@ -2,7 +2,6 @@ import re
 from django.db import models
 from django.shortcuts import reverse
 
-
 class Semester:
     """ A semester, with a calendar year and a season.
     Season codes: (a,b,c) -> (Spring, Summer, Fall)
@@ -31,7 +30,7 @@ class Semester:
     def id(self):
         """ Returns the numerical ID for this semester.
         (Year Y, semester s) (with s=0,1,2 -> a,b,c) is semester
-          3(Y-1740) + s       = 780 + 3(Y-2000) + s
+          3(Y-1740) + s = 780 + 3(Y-2000) + s
         Semester 2010a is 810. Current (2010c) is 812. """
         return 3 * (self.year - 1740) + self.semesternum
 
@@ -113,27 +112,8 @@ class Department(models.Model):
     code = models.CharField(max_length=5, primary_key=True)
     name = models.CharField(max_length=200)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.code
-
-    @property
-    def tokens(self):
-        """List of single-word strings used to guide search.
-
-        >>> d = Department.objects.create(code="ECON", name="Economics")
-        >>> d.tokens
-        ['economics', 'econ']
-        >>> d.delete()
-
-        >>> d = Department.objects.create(code="CIS",
-        ...                               name="Computer and Information Science")
-        >>> d.tokens
-        ['computer', 'and', 'information', 'science', 'cis']
-        >>> d.delete()
-        """
-        tokens = self.name.lower().split()
-        tokens.append(self.code.lower())
-        return tokens
 
 
 class CourseHistory(models.Model):
@@ -143,7 +123,7 @@ class CourseHistory(models.Model):
        of the same course."""
     notes = models.TextField()
 
-    def __unicode__(self):
+    def __str__(self):
         return u"CourseHistory ID %d (%s)" % (self.id, self.notes)
 
     @property
@@ -174,10 +154,8 @@ class Course(models.Model):
     # e.g. FINANCIAL ACCOUNTING
     name = models.CharField(max_length=200)
 
-    credits = models.FloatField(null=True)
     description = models.TextField()
     history = models.ForeignKey(CourseHistory, null=True, on_delete=models.CASCADE)
-    oldpcr_id = models.IntegerField(null=True)
 
     # This is the course's primary cross-listing. In fact, cross-listings are
     # handled at the section level on ISC's side, but we abstract to the course
@@ -187,39 +165,13 @@ class Course(models.Model):
     primary_alias = models.ForeignKey(
         'Alias', related_name='courses', null=True, on_delete=models.PROTECT)
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s %s" % (self.id, self.name)
-
-    @property
-    def tokens(self):
-        """List of single-word strings used to guide search.
-
-        >>> d = Department.objects.create(code="econ")
-        >>> c = Course.objects.create(name="INTRO TO MICRO")
-        >>> alias = Alias.objects.create(department=d, course=c, coursenum=001)
-        >>> c.primary_alias = alias
-        >>> c.tokens == ['econ001', 'econ-001', 'econ', '001', 'intro', 'to', 'micro']
-        True
-        >>> alias.delete()
-        >>> c.delete()
-        >>> d.delete()
-        """
-        tokens = []
-        for alias in self.getAliases():
-            tokens.append(alias.lower().replace("-", ""))
-            tokens.append(alias.lower())
-            tokens.extend(alias.lower().split("-"))
-        tokens.extend(self.name.lower().split())
-        return tokens
 
     @property
     def code(self):
         return '%s-%03d' % (self.primary_alias.department_id,
                             self.primary_alias.coursenum)
-
-    def getAliases(self):
-        return ["%s-%03d" % (x.department_id, x.coursenum)
-                for x in self.alias_set.all()]
 
 
 class Instructor(models.Model):
@@ -232,29 +184,12 @@ class Instructor(models.Model):
     email = models.EmailField(max_length=80, null=True)
     # TODO photo?
     website = models.URLField(max_length=200, null=True)
-    oldpcr_id = models.IntegerField(null=True)
 
     @property
     def name(self):
         return (self.first_name or "") + " " + (self.last_name or "")
 
-    @property
-    def temp_id(self):
-        return re.sub(r"[^\w]", "-", "%d %s" % (self.id, self.name))
-        # for pennapps demo only
-
-    @property
-    def tokens(self):
-        """List single-word strings that can aid in finding this object.
-        >>> i = Instructor.objects.create(first_name="Uriel", last_name="Spiegel")
-        >>> i.tokens
-        ['uriel', 'spiegel']
-        >>> i.delete()
-        """
-        name = self.name or ""
-        return name.lower().split()
-
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -266,11 +201,8 @@ class Alias(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     department = models.ForeignKey(Department, on_delete=models.PROTECT)
     coursenum = models.IntegerField()
-    semester = SemesterField()  # redundant; should equal course.semester
-    # when importing from registrar , we don't have pcr_id's
-    oldpcr_id = models.IntegerField(null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s: %s-%03d (%s)" % (self.course_id,
                                      self.department,
                                      self.coursenum,
@@ -312,28 +244,13 @@ class Section(models.Model):
     """
     # and a few others, online course, NSO proseminar, SCUE preceptorial
 
-    # need to allow nulls for when importing from registrat
-    oldpcr_id = models.IntegerField(null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s-%03d " % (self.course, self.sectionnum)
 
     class Meta:
         """ To hold uniqueness constraint """
         unique_together = (("course", "sectionnum"),)
-
-    # TODO: Deprecate
-    def getAliases(self):
-        return self.aliases
-
-    @property
-    def aliases(self):
-        return ["%s-%03d" % (alias, self.sectionnum)
-                for alias in self.course.getAliases()]
-
-    @property
-    def api_id(self):
-        return "%s-%03d" % (self.course_id, self.sectionnum)
 
 
 class Review(models.Model):
@@ -349,7 +266,7 @@ class Review(models.Model):
         """ To hold uniqueness constraint """
         unique_together = (("section", "instructor"),)
 
-    def __unicode__(self):
+    def __str__(self):
         return "Review for %s" % str(self.section)
 
 
@@ -363,5 +280,5 @@ class ReviewBit(models.Model):
         """ To hold uniqueness constraint """
         unique_together = (("review", "field"),)
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s - %s: %s" % (str(self.review), self.field, self.score)
