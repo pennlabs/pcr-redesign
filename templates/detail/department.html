@@ -1,9 +1,5 @@
 {% extends "base.html" %}
 {% load static %}
-{% load infobox %}
-{% load scoretable %}
-{% load prettify %}
-{% load templates %}
 
 {% block title %}
   Penn Course Review - {{title}}
@@ -26,7 +22,6 @@
 
 {% block banner-content %}
   <div id="banner-info" data-type="{{ type }}">
-    {% infobox item %}
   </div>
   <div id="row-select-placeholder">
       <object type="image/svg+xml" data="{% static 'image/selectrow.svg' %}">
@@ -42,6 +37,5 @@
 
 {% block content-content %}
 <div class="box clearfix">
-  {% scoretable item %}
 </div>
 {% endblock %}
