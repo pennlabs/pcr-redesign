@@ -7,7 +7,7 @@ from .models import Instructor, Review, Department, CourseHistory
 
 
 def course(request, code):
-    dept, num = re.match("(\w+)(\d+)", code)
+    dept, num = re.match("(\w+)-(\d+)", code).groups()
     course_history = get_object_or_404(CourseHistory, course__primary_alias__department__code__iexact=dept, course__primary_alias__coursenum=num)
     reviews = Review.objects.filter(section__course__history=course_history)
     context = {

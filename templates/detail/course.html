@@ -1,10 +1,6 @@
 <!-- Override "block" from detail.html -->
 {% extends "base.html" %}
 {% load static %}
-{% load infobox %}
-{% load scoretable %}
-{% load prettify %}
-{% load templates %}
 
 {% block title %}
   Penn Course Review - {{title}}
@@ -26,16 +22,14 @@
 
 {% block banner-content %}
   <div id="banner-info" data-type="{{ type }}">
-    {% infobox item %}
   </div>
-  {% include "pcr_detail/scorecard.html" %}
+  {% include "detail/scorecard.html" %}
   <p class="desc">{{item.description|default_if_none:""}}</p>
   <script src="{% static "js/loader.js" %}"></script>
 {% endblock %}
 
 {% block content-content %}
 <div class="box clearfix">
-  {% scoretable item %}
 </div>
 <div id="course-details" class="box clearfix">
   <div id="select-prof">

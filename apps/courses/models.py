@@ -50,11 +50,11 @@ class Semester:
         return "%s %d" % (["Spring", "Summer", "Fall"][self.semesternum], self.year)
 
     @staticmethod
-    def semesterFromID(id):
+    def semesterFromID(val):
         """ Given a numerical semester ID, return a semester. """
-        if isinstance(id, Semester):
-            return id
-        return Semester(1740 + id / 3, "abc"[id % 3])
+        if isinstance(val, Semester):
+            return val
+        return Semester(1740 + val / 3, "abc"[val % 3])
 
     def semesterFromCode(yyyys):
         if len(yyyys) != 5:
@@ -81,6 +81,8 @@ class SemesterField(models.Field):
             return value
         if value == "":
             return Semester()
+        if isinstance(value, int):
+            return Semester.semesterFromID(value)
         if "HACKS!":  # commence hack:
             try:
                 seasons = ["Spring", "Summer", "Fall"]
@@ -90,11 +92,9 @@ class SemesterField(models.Field):
             except KeyError:
                 pass
         try:
-            id = int(value)
+            return Semester.semesterFromID(int(value))
         except ValueError as e:
             raise e
-        else:
-            return Semester.semesterFromID(id)
 
     def from_db_value(self, value, expression, connection, context):
         return self.to_python(value)
