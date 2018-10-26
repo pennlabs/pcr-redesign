@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "detail.html" %}
 {% load static %}
 
 {% block title %}
@@ -20,9 +20,7 @@
   <script src="{% static "js/reviews.js" %}"></script>
 {% endblock %}
 
-{% block banner-content %}
-  <div id="banner-info" data-type="{{ type }}">
-  </div>
+{% block sidebox %}
   <div id="row-select-placeholder">
       <object type="image/svg+xml" data="{% static 'image/selectrow.svg' %}">
           <img src="{% static 'image/selectrow.svg' %}" />
@@ -35,7 +33,5 @@
   </div>
 {% endblock %}
 
-{% block content-content %}
-<div class="box clearfix">
-</div>
+{% block mainbox %}
 {% endblock %}

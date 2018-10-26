@@ -2,15 +2,15 @@ import re
 
 from django.shortcuts import render, redirect, get_object_or_404
 
-from .models import Instructor, Review, Department, CourseHistory
+from .models import Course, Instructor, Review, Department, CourseHistory
 
 
 def course(request, code):
     dept, num = re.match("(\w+)-(\d+)", code).groups()
-    course_history = get_object_or_404(CourseHistory, course__primary_alias__department__code__iexact=dept, course__primary_alias__coursenum=num)
-    reviews = Review.objects.filter(section__course__history=course_history)
+    course = get_object_or_404(Course, primary_alias__department__code__iexact=dept, primary_alias__coursenum=num)
+    reviews = Review.objects.filter(section__course__history=course.history)
     context = {
-        'item': course_history,
+        'item': course,
         'reviews': reviews,
         'title': "{} {}".format(dept, num)
     }

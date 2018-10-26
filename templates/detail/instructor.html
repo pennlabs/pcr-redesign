@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "detail.html" %}
 {% load static %}
 
 {% block title %}
@@ -19,13 +19,9 @@
   <script src="{% static "js/reviews.js" %}"></script>
 {% endblock %}
 
-{% block banner-content %}
-  <div id="banner-info" data-type="{{ type }}">
-  </div>
+{% block sidebox %}
   {% include "detail/scorecard.html" %}
 {% endblock %}
 
-{% block content-content %}
-<div class="box clearfix">
-</div>
+{% block mainbox %}
 {% endblock %}
