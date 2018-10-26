@@ -193,6 +193,10 @@ class Instructor(models.Model):
     def code(self):
         return "{}-{}-{}".format(self.id, self.first_name.upper() or "", self.last_name.upper() or "")
 
+    @property
+    def departments(self):
+        return Department.objects.filter(aliases__course__sections__instructors=self)
+
     def __str__(self):
         return self.name
 
@@ -203,7 +207,7 @@ class Alias(models.Model):
     """
 
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    department = models.ForeignKey(Department, on_delete=models.PROTECT)
+    department = models.ForeignKey(Department, on_delete=models.PROTECT, related_name="aliases")
     coursenum = models.IntegerField()
 
     def __str__(self):
@@ -228,10 +232,10 @@ class Section(models.Model):
 
     TODO: document how group works
     """
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="sections")
     name = models.CharField(max_length=200)
     sectionnum = models.IntegerField()
-    instructors = models.ManyToManyField(Instructor)
+    instructors = models.ManyToManyField(Instructor, related_name="sections")
     group = models.IntegerField(null=True)
     sectiontype = models.CharField(max_length=3, null=True)
     """ Section type values:

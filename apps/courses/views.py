@@ -59,6 +59,7 @@ def autocomplete(request):
         "instructors": [{
             "category": "Instructors",
             "title": instructor.name,
+            "desc": ", ".join([x.code for x in instructor.departments]),
             "url": reverse("instructor", kwargs={"name": instructor.code})
         } for instructor in Instructor.objects.filter(Q(first_name__icontains=query) | Q(last_name__icontains=query))]
     })
