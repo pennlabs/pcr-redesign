@@ -1,6 +1,6 @@
-import re
 from django.db import models
 from django.shortcuts import reverse
+
 
 class Semester:
     """ A semester, with a calendar year and a season.
@@ -244,7 +244,6 @@ class Section(models.Model):
     """
     # and a few others, online course, NSO proseminar, SCUE preceptorial
 
-
     def __str__(self):
         return "%s-%03d " % (self.course, self.sectionnum)
 
@@ -256,7 +255,7 @@ class Section(models.Model):
 class Review(models.Model):
     """ The aggregate review data for a class. """
     section = models.ForeignKey(Section, on_delete=models.CASCADE)
-    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, related_name="reviews")
     forms_returned = models.IntegerField()
     forms_produced = models.IntegerField()
     form_type = models.IntegerField()

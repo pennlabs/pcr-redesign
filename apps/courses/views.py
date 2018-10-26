@@ -1,62 +1,31 @@
+import re
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 
 from .models import Instructor, Review, Department, CourseHistory
-from collections import OrderedDict
 
 
-def instructor(request, id):
-    instructor = Instructor(id)
+def course(request, code):
+    dept, num = re.match("(\w+)(\d+)", code)
+    course_history = get_object_or_404(CourseHistory, course__primary_alias__department__code__iexact=dept, course__primary_alias__coursenum=num)
+    reviews = Review.objects.filter(section__course__history=course_history)
     context = {
-        'item': instructor,
-        'reviews': instructor.reviews,
-        'title': instructor.name,
-        'show_name': True,
-        'type': 'instructor',
-    }
-    return render(request, 'detail/instructor.html', context)
-
-
-# groups instructors to reviews by recency in semester
-def sorted_instructors_by_sem(reviews):
-    sorted_reviews = sorted(reviews, key=lambda review: review.section.course.semester)
-    instructor_to_most_recent_sem = {}
-    for review in sorted_reviews:
-        instructor_to_most_recent_sem[review.instructor] = review.section.course.semester
-    sorted_instructors = sorted(instructor_to_most_recent_sem.items(), key=lambda x: x[1], reverse=True)
-    grouped_obj = OrderedDict()
-    for i in sorted_instructors:
-        associated_reviews = []
-        for review in sorted_reviews:
-            if review.instructor.name == i[0].name:
-                associated_reviews.append(review)
-        grouped_obj[i[0]] = associated_reviews
-    return grouped_obj
-
-
-def course(request, title):
-    title = title.upper()
-    coursehistory = CourseHistory(title)
-    reviews = set(
-        review for course in coursehistory.courses for section in course.sections for review in section.reviews)
-    grouped_reviews = sorted_instructors_by_sem(reviews)
-    context = {
-        'item': coursehistory,
+        'item': course_history,
         'reviews': reviews,
-        'show_name': len(set([r.section.name for r in reviews])) != 1,
-        'title': title,
-        'type': 'course',
-        'instructor_list': grouped_reviews
+        'title': "{} {}".format(dept, num)
     }
     return render(request, 'detail/course.html', context)
 
 
 def instructor(request, name):
-    pass
-
-
-def course(request, code):
-    pass
+    instructor = get_object_or_404(Instructor, id=name.split("-", 1)[0])
+    context = {
+        'item': instructor,
+        'reviews': instructor.reviews,
+        'title': instructor.name
+    }
+    return render(request, 'detail/instructor.html', context)
 
 
 def department(request, code):
