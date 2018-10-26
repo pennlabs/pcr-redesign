@@ -25,9 +25,10 @@ Penn Course Review - {{title}}
 {% block content %}
     <div class="col-sm-12 col-md-4 box-wrapper sidebar-col">
         <div id="banner-info" class="box">
-            <div class="title">{{ title }}</div>
-            <div class="subtitle">{{ item.name }}</div>
-            {% block sidebox %}{% endblock %}
+            {% block sidebox %}
+                <div class="title">{{ title }}</div>
+                <div class="subtitle">{{ item.name }}</div>
+            {% endblock %}
         </div>
     </div>
 
