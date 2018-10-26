@@ -1,6 +1,7 @@
 import re
 
-from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
+from django.shortcuts import render, reverse, redirect, get_object_or_404
 
 from .models import Course, Instructor, Review, Department, CourseHistory
 
@@ -38,7 +39,21 @@ def department(request, code):
 
 
 def autocomplete(request):
-    pass
+    return JsonResponse({
+        "departments": [{
+            "category": "Departments",
+            "keywords": dept.code,
+            "title": dept.code,
+            "url": reverse("department", kwargs={"code": dept.code}),
+        } for dept in Department.objects.all()],
+        "courses": [{
+            "category": "Courses"
+        } for course in Course.objects.all()],
+        "instructors": [{
+            "category": "Instructors",
+            "title": instructor.name,
+        } for instructor in Instructor.objects.all()]
+    })
 
 
 def about(request):

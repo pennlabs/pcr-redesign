@@ -42,7 +42,7 @@ $(document).ready(function() {
             }
             else {
                 searchCache[queryStart] = null;
-                $.getJSON("/autocomplete_data.json/" + queryStart + ".json", function(data) {
+                $.getJSON("/autocomplete?q=" + encodeURIComponent(queryStart), function(data) {
                     var out = data.courses.concat(data.departments).concat(data.instructors);
                     searchCache[queryStart] = out;
                     callback(out);
