@@ -21,13 +21,11 @@
 
 {% block banner-content %}
   <div id="banner-info" data-type="{{ type }}">
-    {% infobox item %}
   </div>
   {% include "detail/scorecard.html" %}
 {% endblock %}
 
 {% block content-content %}
 <div class="box clearfix">
-  {% scoretable item %}
 </div>
 {% endblock %}
