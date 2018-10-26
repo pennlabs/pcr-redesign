@@ -3,6 +3,7 @@ import re
 from django.http import JsonResponse
 from django.shortcuts import render, reverse, redirect, get_object_or_404
 
+from django.db.models import Q
 from .models import Course, Instructor, Review, Department, CourseHistory
 
 
@@ -39,6 +40,8 @@ def department(request, code):
 
 
 def autocomplete(request):
+    query = request.GET.get("q", "")
+
     return JsonResponse({
         "departments": [{
             "category": "Departments",
@@ -46,18 +49,18 @@ def autocomplete(request):
             "title": dept.code,
             "desc": dept.name,
             "url": reverse("department", kwargs={"code": dept.code}),
-        } for dept in Department.objects.all()],
+        } for dept in Department.objects.filter(code__icontains=query)],
         "courses": [{
             "category": "Courses",
             "title": course.code.replace("-", " "),
             "desc": course.name,
             "url": reverse("course", kwargs={"code": course.code})
-        } for course in Course.objects.all()],
+        } for course in Course.objects.filter(primary_alias__coursenum__icontains=query)],
         "instructors": [{
             "category": "Instructors",
             "title": instructor.name,
             "url": reverse("instructor", kwargs={"name": instructor.code})
-        } for instructor in Instructor.objects.all()]
+        } for instructor in Instructor.objects.filter(Q(first_name__icontains=query) | Q(last_name__icontains=query))]
     })
 
 
