@@ -50,7 +50,7 @@ $(document).ready(function() {
             }
         },
         onItemAdd: function(value) {
-            window.location.href = "/" + value;
+            window.location.href = value;
             if ($("#loading").length) {
                 $("#loading").show();
                 $("#search .selectize-control").hide();

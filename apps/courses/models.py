@@ -187,7 +187,11 @@ class Instructor(models.Model):
 
     @property
     def name(self):
-        return (self.first_name or "") + " " + (self.last_name or "")
+        return "{} {}".format(self.first_name or "", self.last_name or "").strip()
+
+    @property
+    def code(self):
+        return "{}-{}-{}".format(self.id, self.first_name.upper() or "", self.last_name.upper() or "")
 
     def __str__(self):
         return self.name

@@ -44,14 +44,19 @@ def autocomplete(request):
             "category": "Departments",
             "keywords": dept.code,
             "title": dept.code,
+            "desc": dept.name,
             "url": reverse("department", kwargs={"code": dept.code}),
         } for dept in Department.objects.all()],
         "courses": [{
-            "category": "Courses"
+            "category": "Courses",
+            "title": course.code.replace("-", " "),
+            "desc": course.name,
+            "url": reverse("course", kwargs={"code": course.code})
         } for course in Course.objects.all()],
         "instructors": [{
             "category": "Instructors",
             "title": instructor.name,
+            "url": reverse("instructor", kwargs={"name": instructor.code})
         } for instructor in Instructor.objects.all()]
     })
 
