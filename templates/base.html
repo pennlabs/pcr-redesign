@@ -77,21 +77,6 @@
 
     <div id="content" class="row">
     {% block content %}
-        {% block banner-div %}
-            <div class="col-sm-12 col-md-4 box-wrapper sidebar-col">
-                <div class="box">
-                    {% block banner-content %}
-                    {% endblock %}
-                </div>
-            </div>
-        {% endblock %}
-
-        {% block content-div %}
-            <div class="col-sm-12 col-md-8 main-col">
-                {% block content-content %}
-                {% endblock %}
-            </div>
-        {% endblock %}
     {% endblock %}
     </div>
 

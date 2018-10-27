@@ -1,57 +1,77 @@
-{% load prettify %}
+<!-- TODO: prettify -->
+{% comment "Optional note" %}
 {% if reviews|length > 0 %}
+{% endcomment %}
 <div id="banner-score">
     <div class="scoredesc">
         <p class="title">Average</p>
-        <p class="subtitle">{{reviews|length}} Section{{reviews|length|pluralize}}</p>
+        <p class="subtitle">8 sections</p>
     </div>
     <div class="scoreboxrow">
+      {% comment "Optional note" %}
         {% with avg=reviews|average:"rCourseQuality" %}
-        <div class="scorebox course {{avg|rating_class}}">
-            <p class="num">{{avg|floatformat:1|default:"N/A"}}</p>
+        {% endcomment %}
+        <div class="scorebox course">
+            <p class="num">4.0</p>
             <p class="desc">Course</p>
         </div>
+        {% comment "Optional note" %}
         {% endwith %}
         {% with avg=reviews|average:"rInstructorQuality" %}
-        <div class="scorebox instructor {{avg|rating_class}}">
-            <p class="num">{{avg|floatformat:1|default:"N/A"}}</p>
+        {% endcomment %}
+        <div class="scorebox instructor">
+            <p class="num">4.0</p>
             <p class="desc">Instructor</p>
         </div>
+        {% comment "Optional note" %}
         {% endwith %}
         {% with avg=reviews|average:"rDifficulty" %}
-        <div class="scorebox difficulty {{avg|rating_class}}">
-            <p class="num">{{avg|floatformat:1|default:"N/A"}}</p>
+        {% endcomment %}
+        <div class="scorebox difficulty">
+            <p class="num">4.0</p>
             <p class="desc">Difficulty</p>
         </div>
+        {% comment "Optional note" %}
         {% endwith %}
+        {% endcomment %}
     </div>
     <div class="scoredesc">
         <p class="title">Recent</p>
-        <p class="subtitle">{{recents.0.section.course.semester|semester}}</p>
+        <p class="subtitle">some recent courses</p>
     </div>
     <div class="scoreboxrow">
+      {% comment "Optional note" %}
         {% with recents=reviews|recent %}
         {% with score=recents|average:"rCourseQuality" %}
-        <div class="scorebox course {{ score|rating_class }}">
-            <p class="num">{{score|floatformat:1|default:"N/A"}}</p>
+          {% endcomment %}
+        <div class="scorebox course">
+            <p class="num">4.0</p>
             <p class="desc">Course</p>
         </div>
+        {% comment "Optional note" %}
         {% endwith %}
 
         {% with score=recents|average:"rInstructorQuality" %}
-        <div class="scorebox instructor {{ score|rating_class }}">
-            <p class="num">{{score|floatformat:1|default:"N/A"}}</p>
+        {% endcomment %}
+        <div class="scorebox instructor">
+            <p class="num">4.0</p>
             <p class="desc">Instructor</p>
         </div>
+          {% comment "Optional note" %}
         {% endwith %}
 
         {% with score=recents|average:"rDifficulty" %}
-        <div class="scorebox difficulty {{ score|rating_class }}">
-            <p class="num">{{score|floatformat:1|default:"N/A"}}</p>
+        {% endcomment %}
+        <div class="scorebox difficulty">
+            <p class="num">4.0</p>
             <p class="desc">Difficulty</p>
         </div>
+          {% comment "Optional note" %}
         {% endwith %}
         {% endwith %}
+        {% endcomment %}
     </div>
 </div>
+  {% comment "Optional note" %}
 {% endif %}
+  {% endcomment %}

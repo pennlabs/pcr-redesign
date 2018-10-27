@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Penn Course Review - {{title}}
+{% endblock %}
+
+{% block css %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static "css/jquery.dataTables.min.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "css/select.dataTables.min.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "css/buttons.dataTables.min.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "css/reviews.css" %}" />
+{% endblock %}
+
+{% block js %}
+{{ block.super }}
+<script src="{% static "js/jquery.dataTables.min.js" %}"></script>
+<script src="{% static "js/dataTables.select.min.js" %}"></script>
+<script src="{% static "js/dataTables.buttons.min.js" %}"></script>
+<script src="{% static "js/chart.min.js" %}"></script>
+<script src="{% static "js/reviews.js" %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="col-sm-12 col-md-4 box-wrapper sidebar-col">
+        <div id="banner-info" class="box">
+            {% block sidebox %}
+                <div class="title">{{ title }}</div>
+                <div class="subtitle">{{ item.name }}</div>
+            {% endblock %}
+        </div>
+    </div>
+
+    <div class="col-sm-12 col-md-8 main-col">
+        <div class="box clearfix">
+            {% block mainbox %}{% endblock %}
+        </div>
+        {% block bottombox %}{% endblock %}
+    </div>
+{% endblock %}

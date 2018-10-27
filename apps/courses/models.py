@@ -1,6 +1,6 @@
-import re
 from django.db import models
 from django.shortcuts import reverse
+
 
 class Semester:
     """ A semester, with a calendar year and a season.
@@ -50,11 +50,11 @@ class Semester:
         return "%s %d" % (["Spring", "Summer", "Fall"][self.semesternum], self.year)
 
     @staticmethod
-    def semesterFromID(id):
+    def semesterFromID(val):
         """ Given a numerical semester ID, return a semester. """
-        if isinstance(id, Semester):
-            return id
-        return Semester(1740 + id / 3, "abc"[id % 3])
+        if isinstance(val, Semester):
+            return val
+        return Semester(1740 + val / 3, "abc"[val % 3])
 
     def semesterFromCode(yyyys):
         if len(yyyys) != 5:
@@ -81,6 +81,8 @@ class SemesterField(models.Field):
             return value
         if value == "":
             return Semester()
+        if isinstance(value, int):
+            return Semester.semesterFromID(value)
         if "HACKS!":  # commence hack:
             try:
                 seasons = ["Spring", "Summer", "Fall"]
@@ -90,11 +92,9 @@ class SemesterField(models.Field):
             except KeyError:
                 pass
         try:
-            id = int(value)
+            return Semester.semesterFromID(int(value))
         except ValueError as e:
             raise e
-        else:
-            return Semester.semesterFromID(id)
 
     def from_db_value(self, value, expression, connection, context):
         return self.to_python(value)
@@ -187,7 +187,15 @@ class Instructor(models.Model):
 
     @property
     def name(self):
-        return (self.first_name or "") + " " + (self.last_name or "")
+        return "{} {}".format(self.first_name or "", self.last_name or "").strip()
+
+    @property
+    def code(self):
+        return "{}-{}-{}".format(self.id, self.first_name.upper() or "", self.last_name.upper() or "")
+
+    @property
+    def departments(self):
+        return Department.objects.filter(aliases__course__sections__instructors=self)
 
     def __str__(self):
         return self.name
@@ -199,7 +207,7 @@ class Alias(models.Model):
     """
 
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    department = models.ForeignKey(Department, on_delete=models.PROTECT)
+    department = models.ForeignKey(Department, on_delete=models.PROTECT, related_name="aliases")
     coursenum = models.IntegerField()
 
     def __str__(self):
@@ -224,10 +232,10 @@ class Section(models.Model):
 
     TODO: document how group works
     """
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="sections")
     name = models.CharField(max_length=200)
     sectionnum = models.IntegerField()
-    instructors = models.ManyToManyField(Instructor)
+    instructors = models.ManyToManyField(Instructor, related_name="sections")
     group = models.IntegerField(null=True)
     sectiontype = models.CharField(max_length=3, null=True)
     """ Section type values:
@@ -244,7 +252,6 @@ class Section(models.Model):
     """
     # and a few others, online course, NSO proseminar, SCUE preceptorial
 
-
     def __str__(self):
         return "%s-%03d " % (self.course, self.sectionnum)
 
@@ -256,7 +263,7 @@ class Section(models.Model):
 class Review(models.Model):
     """ The aggregate review data for a class. """
     section = models.ForeignKey(Section, on_delete=models.CASCADE)
-    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, related_name="reviews")
     forms_returned = models.IntegerField()
     forms_produced = models.IntegerField()
     form_type = models.IntegerField()
