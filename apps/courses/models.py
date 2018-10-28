@@ -215,8 +215,7 @@ class Alias(models.Model):
     def __str__(self):
         return "%s: %s-%03d (%s)" % (self.course_id,
                                      self.department,
-                                     self.coursenum,
-                                     self.semester.code()
+                                     self.coursenum
                                      )
 
     @property
