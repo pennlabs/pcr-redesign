@@ -1,6 +1,6 @@
 import re
 
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.shortcuts import render, reverse, redirect, get_object_or_404
 
 from django.db.models import Q
@@ -8,7 +8,10 @@ from .models import Course, Instructor, Review, Department, CourseHistory
 
 
 def course(request, code):
-    dept, num = re.match("(\w+)-(\d+)", code).groups()
+    try:
+        dept, num = re.match("(\w+)-(\d+)", code).groups()
+    except AttributeError:
+        raise Http404
     course = get_object_or_404(Course, primary_alias__department__code__iexact=dept, primary_alias__coursenum=num)
     reviews = Review.objects.filter(section__course__history=course.history)
     context = {
