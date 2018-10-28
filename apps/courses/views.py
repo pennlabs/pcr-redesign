@@ -9,7 +9,7 @@ from .models import Course, Instructor, Review, Department, CourseHistory
 
 def course(request, code):
     try:
-        dept, num = re.match("(\w+)-(\d+)", code).groups()
+        dept, num = re.match(r"(\w+)-(\d+)", code).groups()
     except AttributeError:
         raise Http404
     course = get_object_or_404(Course, primary_alias__department__code__iexact=dept, primary_alias__coursenum=num)

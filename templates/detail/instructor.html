@@ -1,10 +1,6 @@
 {% extends "detail.html" %}
 {% load static %}
 
-{% block title %}
-  Penn Course Review - {{title}}
-{% endblock %}
-
 {% block sidebox %}
   {{ block.super }}
   {% include "detail/scorecard.html" %}
