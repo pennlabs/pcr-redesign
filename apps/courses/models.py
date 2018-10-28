@@ -213,7 +213,7 @@ class Alias(models.Model):
     coursenum = models.IntegerField()
 
     def __str__(self):
-        return "%s: %s-%03d (%s)" % (self.course_id,
+        return "%s: %s-%03d" % (self.course_id,
                                      self.department,
                                      self.coursenum
                                      )

@@ -16,4 +16,42 @@
 {% endblock %}
 
 {% block mainbox %}
+{% if courses|length > 0 %}
+  <div id="content-section">
+    <div id="table-div">
+      <table id="course-table" class="d-none" count="{{table.body|length}}">
+        <thead>
+          <tr>
+            {% block key %}
+            {% endblock %}
+
+            <th class="col_name">
+              <span class="th-text">Class</span>
+            </th>
+
+
+            <th class="col_{{attribute}}"> <!-- for attribute in reviews|columns -->
+              <span class="th-text">attribute|reviewbit</span>
+            </th>
+
+          <th class="col_section">Section</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% block body %}
+          {% endblock %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div id="scroll-indicator">
+      <div>Scroll down for previous {% block scroll_type %}classes{% endblock %}</div>
+      <i class="fa fa-2x fa-chevron-down"></i>
+  </div>
+
+
+{% else %}
+<p>No Courses found.</p>
+{% endif %}
+
 {% endblock %}

@@ -37,7 +37,8 @@ def department(request, code):
     context = {
         'item': department,
         'title': department.code,
-        'reviews': Review.objects.filter(section__course__primary_alias__department=department)
+        'reviews': Review.objects.filter(section__course__primary_alias__department=department),
+        'courses': Course.objects.filter(primary_alias__department=department)
     }
     return render(request, 'detail/department.html', context)
 
