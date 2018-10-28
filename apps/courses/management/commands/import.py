@@ -28,7 +28,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('Successfully imported data!'))
 
     def parse_course_desc(self, src):
-        with open(src + "test.sql") as f:
+        with open("{}/test.sql".format(src)) as f:
             statements = sqlparse.parse(f)
             for statement in statements:
                 if statement.get_type() == "INSERT":
@@ -45,7 +45,7 @@ class Command(BaseCommand):
         print(self.courses)
 
     def parse_crosslistings(self, src):
-        with open(src + "TEST_PCR_CROSSLIST_SUMMARY_V.sql") as f:
+        with open("{}/TEST_PCR_CROSSLIST_SUMMARY_V.sql".format(src)) as f:
             statements = sqlparse.parse(f)
             for statement in statements:
                 if statement.get_type() == "INSERT":
@@ -64,7 +64,7 @@ class Command(BaseCommand):
         print(self.crosslistings)
 
     def parse_ratings(self, src):
-        with open(src + "TEST_PCR_RATING_V.sql") as f:
+        with open("{}/TEST_PCR_RATING_V.sql".format(src)) as f:
             statements = sqlparse.parse(f)
             for statement in statements:
                 col_names = ""
