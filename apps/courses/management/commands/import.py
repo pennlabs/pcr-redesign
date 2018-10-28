@@ -1,14 +1,18 @@
-from django.core.management.base import BaseCommand, CommandError
-from apps.courses.models import Course, Alias
 import sqlparse
 import re
 
+from django.core.management.base import BaseCommand, CommandError
+from apps.courses.models import Course, Alias
+
+
 class Command(BaseCommand):
     help = 'Import PCR data provided by ISC.'
-    
-    courses = {}
-    crosslistings = []
-    ratings = []
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(self, *args, **kwargs)
+        self.courses = {}
+        self.crosslistings = []
+        self.ratings = []
 
     def add_arguments(self, parser):
         pass  # TODO
@@ -19,7 +23,7 @@ class Command(BaseCommand):
         self.parse_crosslistings(src)
         self.parse_ratings(src)
         self.stdout.write(self.style.SUCCESS('Successfully imported data!'))
-    
+
     def parse_course_desc(self, src):
         with open(src + "test.sql") as f:
             statements = sqlparse.parse(f)
@@ -86,7 +90,7 @@ class Command(BaseCommand):
         return entry_dict
 
     def populate_models(self):
-        for course, entries in courses:
+        for course, entries in self.courses:
             entries.sort()
             desc = ""
             for num, paragraph in entries:
