@@ -7,6 +7,7 @@ name = "pypi"
 django = "*"
 django-extensions = "*"
 dj-database-url = "*"
+sqlparse = "*"
 
 [dev-packages]
 "flake8" = "*"
