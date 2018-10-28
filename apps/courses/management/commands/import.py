@@ -1,3 +1,4 @@
+import os
 import sqlparse
 import re
 
@@ -15,10 +16,12 @@ class Command(BaseCommand):
         self.ratings = []
 
     def add_arguments(self, parser):
-        pass  # TODO
+        parser.add_argument("path", nargs="+", help="The path where the ISC SQL files are located.")
 
     def handle(self, *args, **options):
-        src = "/Users/jerrylu/pcr_redesign/"
+        src = "".join(options["path"])
+        if not os.path.isdir(src):
+            raise CommandError("The directory '{}' does not exist!".format(src))
         self.parse_course_desc(src)
         self.parse_crosslistings(src)
         self.parse_ratings(src)
