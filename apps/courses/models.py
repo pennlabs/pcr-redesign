@@ -1,5 +1,4 @@
 from django.db import models
-from django.shortcuts import reverse
 
 
 class Semester:
@@ -56,6 +55,7 @@ class Semester:
             return val
         return Semester(1740 + val / 3, "abc"[val % 3])
 
+    @staticmethod
     def semesterFromCode(yyyys):
         if len(yyyys) != 5:
             raise Exception("too many or too few characters")
@@ -78,6 +78,8 @@ class SemesterField(models.Field):
 
     def to_python(self, value):
         if isinstance(value, Semester):
+            return value
+        if value is None:
             return value
         if value == "":
             return Semester()
