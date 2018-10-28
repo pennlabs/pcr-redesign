@@ -22,8 +22,8 @@ def course(request, code):
     return render(request, 'detail/course.html', context)
 
 
-def instructor(request, name):
-    instructor = get_object_or_404(Instructor, id=name.split("-", 1)[0])
+def instructor(request, code):
+    instructor = get_object_or_404(Instructor, id=code.split("-", 1)[0])
     context = {
         'item': instructor,
         'reviews': instructor.reviews,
@@ -63,7 +63,7 @@ def autocomplete(request):
             "category": "Instructors",
             "title": instructor.name,
             "desc": ", ".join([x.code for x in instructor.departments]),
-            "url": reverse("instructor", kwargs={"name": instructor.code})
+            "url": reverse("instructor", kwargs={"code": instructor.code})
         } for instructor in Instructor.objects.filter(Q(first_name__icontains=query) | Q(last_name__icontains=query))]
     })
 

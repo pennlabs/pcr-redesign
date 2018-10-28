@@ -9,7 +9,7 @@ urlpatterns = [
 
     # pcr_detail urls
     path('course/<code>', views.course, name='course'),
-    path('instructor/<name>', views.instructor, name='instructor'),
+    path('instructor/<code>', views.instructor, name='instructor'),
     path('department/<code>', views.department, name='department'),
 
     # searchbar URLs
