@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block css %}
+    {{ block.super }}
     <link rel="stylesheet" href="{% static "css/index.css" %}" />
 {% endblock %}
 
@@ -23,10 +24,6 @@
                 <span class="dot"></span>
             </div>
         </div>
-    </div>
-    <div id="banner">
-        <b>🎉</b> <b>Want to build impactful products like Penn Course Review?</b> Join Penn Labs this fall! Sign up for our mailing list <a href="https://eepurl.com/c07CGb" target="_blank">here</a>! <b>🎉</b>
-        <a class="close" href="#"><i class="fa fa-times"></i></a>
     </div>
 </div>
 {% endblock %}
