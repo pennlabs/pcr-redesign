@@ -3,7 +3,7 @@ import sqlparse
 import re
 
 from django.core.management.base import BaseCommand, CommandError
-from apps.courses.models import Course, Alias
+from apps.courses.models import Course, Alias, Department, Instructor
 
 
 class Command(BaseCommand):
@@ -15,8 +15,6 @@ class Command(BaseCommand):
         self.crosslistings = []
         self.ratings = []
         self.summaries = []
-        #departments = [('ACCT','ACCOUNTING'),('AFAM','AFRO-AMERICAN STUDIES'),('AFST','AFRICAN STUDIES PROGRAM'),('AMES','ASIAN & MIDDLE EASTERN STUDIES'),('ANCH','ANCIENT HISTORY'),('ANTH','ANTHROPOLOGY'),('ARCH','ARCHITECTURE'),('ARTH','ART HISTORY'),('ASAM','ASIAN AMERICAN STUDIES'),('ASTR','ASTRONOMY'),('BCHE','BIOCHEMISTRY (UNDERGRADS)'),('BE','BIOENGINEERING'),('BIBB','BIOLOGICAL BASIS OF BEHAVIOR'),('BIOH','BIOETHICS'),('BIOL','BIOLOGY'),('BPUB','BUSINESS & PUBLIC POLICY'),('CHE','CHEMICAL & BIOMOLECULAR ENGR'),('CHEM','CHEMISTRY'),('CIS','COMPUTER AND INFORMATION SCI'),('CIT','COMPUTER AND INFORMATION TECH'),('CLST','CLASSICAL STUDIES'),('COLL','COLLEGE'),('COML','COMPARATIVE LITERATURE'),('COMM','COMMUNICATIONS'),('CSE','COMPUTER SCIENCE ENGINEERING'),('DEMG','DEMOGRAPHY'),('DTCH','DUTCH'),('EAS','ENGINEERING & APPLIED SCIENCE'),('ECON','ECONOMICS'),('EE','ELECTRICAL ENGINEERING'),('EEUR','EAST EUROPEAN'),('ENGL','ENGLISH'),('ENM','ENGINEERING MATHEMATICS'),('ENVS','ENVIRONMENTAL STUDIES'),('FILM','CINEMA STUDIES'),('FNAR','FINE ARTS'),('FNCE','FINANCE'),('FOLK','FOLKLORE'),('FREN','FRENCH'),('FRSM','NON-SAS FRESHMAN SEMINAR'),('GAFL','GOVERNMENT ADMINISTRATION'),('GENH','GENERAL HONORS'),('GEOL','GEOLOGY'),('GLAW','GENERAL HONORS-LAW'),('GMED','GENERAL HONORS-MEDICINE'),('GREK','GREEK'),('GRMN','GERMANIC LANGUAGES'),('HCMG','HEALTH CARE MANAGEMENT'),('HIST','HISTORY'),('HSOC','HEALTH & SOCIETIES'),('HSSC','HISTORY & SOCIOLOGY OF SCIENCE'),('INSR','INSURANCE AND RISK MANAGEMENT'),('INTR','INTERNATIONAL RELATIONS'),('ITAL','ITALIAN'),('JWST','JEWISH STUDIES PROGRAM'),('LATN','LATIN'),('LGST','LEGAL STUDIES & BUSINESS ETHICS'),('LING','LINGUISTICS'),('MATH','MATHEMATICS'),('MEAM','MECH ENGR AND APPLIED MECH'),('MGMT','MANAGEMENT'),('MKTG','MARKETING'),('MSE','MATERIALS SCIENCE AND ENGINEER'),('MUSC','MUSIC'),('NURS','NURSING'),('OPIM','OPERATIONS AND INFORMATION MGMT'),('PHIL','PHILOSOPHY'),('PHYS','PHYSICS'),('PPE','PHILOSOPHY, POLITICS, ECONOMICS'),('PRTG','PORTUGUESE'),('PSCI','POLITICAL SCIENCE'),('PSYC','PSYCHOLOGY'),('REAL','REAL ESTATE'),('RELS','RELIGIOUS STUDIES'),('RUSS','RUSSIAN'),('SARS','SOUTH ASIA REGIONAL STUDIES'),('SCND','SCANDINAVIAN'),('SLAV','SLAVIC'),('SOCI','SOCIOLOGY'),('SPAN','SPANISH'),('STAT','STATISTICS'),('SYS','SYSTEMS ENGINEERING'),('TCOM','TELECOMMUNICATIONS & NETWORKING'),('THAR','THEATRE ARTS'),('URBS','URBAN STUDIES'),('WHMP','WHARTON MANAGEMENT PROGRAM'),('WSTD','WOMEN\'S STUDIES'),('LTAM',''),('AAMW',''),('INSC',''),('CAMB',''),('TRAN',''),('ROML','ROMANCE LANGUAGES'),('EDUC',''),('LARP','LANDSCAPE ARCH & REGIONAL PLAN'),('CPLN','CITY PLANNING'),('SWRK',''),('WH','WHARTON UNDERGRADUATE'),('BMB',''),('COGS','COGNITIVE SCIENCE'),('PUBH',''),('BSTA',''),('HSPV',''),('GCB',''),('VLST','VISUAL STUDIES'),('LGIC',''),('BENF','BENJAMIN FRANKLIN SEMINARS'),('BFMD','BENJAMIN FRANKLIN SEMINARS-MED'),('CBE','CHEMICAL & BIOMOLECULAR ENGR'),('ESE','ELECTRIC & SYSTEMS ENGINEERING'),('CRIM','CRIMINOLOGY'),('LAW',''),('BIOE',''),('INTS','INTERNATIONAL STUDIES'),('AFRC','AFRICANA STUDIES'),('ALAN','ASIAN LANGUAGES'),('ANEL','ANCIENT NEAR EAST LANGUAGES'),('ARAB','ARABIC'),('BFLW','BENJAMIN FRANKLIN SEMINARS-LAW'),('CHIN','CHINESE'),('EALC','EAST ASIAN LANGUAGES & CIVILZTN'),('HEBR','HEBREW'),('JPAN','JAPANESE'),('KORN','KOREAN'),('NELC','NEAR EASTERN LANGUAGES & CIVLZT'),('PERS','PERSIAN'),('TURK','TURKISH'),('LALS','LATIN AMERICAN & LATINO STUDIES'),('SAST','SOUTH ASIA STUDIES'),('BIOT','BIOTECHNOLOGY'),('CINE','CINEMA STUDIES'),('LSMP','LIFE SCIENCES MANAGEMENT PROG'),('YDSH','YIDDISH'),('ANCS',''),('STSC','SCIENCE, TECHNOLOGY & SOCIETY'),('PSSA','SUMMER SCIENCE ACADEMY'),('GSOC','GENDER, CULTURE & SOCIETY'),('GUJR','GUJARATI'),('HIND','HINDI'),('IPD','INTEGRATED PRODUCT DESIGN'),('MGEC','MANAGEMENT OF ECONOMICS'),('MLA','MASTER OF LIBERAL ARTS PROGRAM'),('MMP','MASTER OF MEDICAL PHYSICS'),('PUNJ','PUNJABI'),('SKRT','SANSKRIT'),('TAML','TAMIL'),('TELU','TELUGU'),('URDU','URDU'),('WHCP','WHARTON COMMUNICATION PGM'),('WRIT','WRITING PROGRAM'),('AMCS',''),('BENG','BENGALI'),('BRYN','BRYN MAWR EXCHANGE'),('DYNM','ORGANIZATIONAL DYNAMICS'),('NGG',''),('HPR',''),('GSWS','GENDER,SEXUALITY & WOMEN\'S STUD'),('INTG','INTEGRATED STUDIES'),('MKSE','MARKETING & SOCIAL SYSTEMS'),('MLYM','MALAYALAM'),('BEPP','BUSINESS ECON & PUBLIC POLICY'),('MSSP','SOCIAL POLICY'),('VIPR','VIPER'),('MED','MEDICAL'),('ENGR','ENGINEERING'),('NETS','NETWORKED AND SOCIAL SYSTEMS'),('NANO','NANOTECHNOLOGY'),('PHRM','PHARMACOLOGY'),('NPLD','NONPROFIT LEADERSHIP'),('VCSN','VETERINARY CLINICAL STUDIES')]
-
 
     def add_arguments(self, parser):
         parser.add_argument("path", nargs="+", help="The path where the ISC SQL files are located.")
@@ -28,7 +26,9 @@ class Command(BaseCommand):
         self.courses = self.parse(src, "test.sql")
         self.crosslistings = self.parse(src, "TEST_PCR_CROSSLIST_SUMMARY_V.sql")
         self.ratings = self.parse(src, "TEST_PCR_RATING_V.sql")
-        self.summaries =self.parse(src, "TEST_PCR_SUMMARY_V.sql")
+        self.summaries = self.parse(src, "summary.sql")
+        self.create_departments()
+        self.create_instructors()
         #self.stdout.write(self.style.SUCCESS('Successfully imported data!'))
 
     def parse(self, src, sql_in):
@@ -45,10 +45,8 @@ class Command(BaseCommand):
                         if isinstance(token, sqlparse.sql.Parenthesis):
                             values = str(token)[1:-1]
                             values = re.sub(r'\([^)]*\)', '\'unused_info\'', values)
-                            #values = "(" + values + ")"
                             dicts.append(self.create_dictionaries(col_names, values))
-        for item in dicts:
-            print(item)
+        return dicts
 
     def create_dictionaries(self, col_names, values):
         entry_dict = {}
@@ -68,6 +66,20 @@ class Command(BaseCommand):
            entry_dict[col_list[i]] = value_list[i]
         return entry_dict
 
+    def create_departments(self):
+        for dictionary in self.summaries:
+            code = dictionary["SUBJECT_CODE"]
+            name = dictionary["SUBJECT_AREA_DESC"]
+            dept, _ = Department.objects.get_or_create(code=code,
+                defaults={"name": name})
+    
+    def create_instructors(self):
+        for dictionary in self.ratings:
+            name = dictionary["INSTRUCTOR_NAME"]
+            last_name, first_name = name.split(',')
+            instructor, _ = Instructor.objects.get_or_create(first_name=first_name, last_name=last_name)
+        print(Instructor.objects.all())
+    
     def populate_models(self):
         for course, entries in self.courses:
             entries.sort()
