@@ -45,7 +45,7 @@ class Command(BaseCommand):
                             col_names = str(token)
                         if isinstance(token, sqlparse.sql.Parenthesis):
                             values = str(token)[1:-1]
-                            values = re.sub(r'\([^)]*\)', '\'unused_info\'', values)
+                            values = re.sub(r'STR_TO_DATE\([^)]*\)', '\'unused_info\'', values)
                             dicts.append(self.create_dictionaries(col_names, values))
         self.stdout.write("Finished reading from '{}'!".format(filename))
         return dicts
