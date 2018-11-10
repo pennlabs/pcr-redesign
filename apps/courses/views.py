@@ -4,7 +4,7 @@ from django.http import JsonResponse, Http404
 from django.shortcuts import render, reverse, redirect, get_object_or_404
 
 from django.db.models import Q
-from .models import Course, Instructor, Review, Department, CourseHistory
+from .models import Course, Instructor, Review, Department, CourseHistory, ReviewBit
 
 
 def course(request, code):
@@ -34,11 +34,13 @@ def instructor(request, code):
 
 def department(request, code):
     department = get_object_or_404(Department, code=code)
+    reviews = Review.objects.filter(section__course__primary_alias__department=department)
     context = {
         'item': department,
         'title': department.code,
-        'reviews': Review.objects.filter(section__course__primary_alias__department=department),
-        'courses': Course.objects.filter(primary_alias__department=department)
+        'reviews': reviews,
+        'review_columns': set(ReviewBit.objects.filter(review__in=reviews).values_list('field', flat=True)),
+        'courses': CourseHistory.objects.filter(course__primary_alias__department=department)
     }
     return render(request, 'detail/department.html', context)
 

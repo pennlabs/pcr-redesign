@@ -221,7 +221,7 @@ class Alias(models.Model):
     @property
     def course_code(self):
         """returns something akin to the tuple ('CIS', 120)"""
-        return (self.department_id, self.coursenum)
+        return ("{}-{}".format(self.department_id, self.coursenum))
 
 
 class Section(models.Model):

@@ -1,5 +1,6 @@
 {% extends "detail.html" %}
 {% load static %}
+{% load prettify %}
 
 {% block sidebox %}
   {{ block.super }}
@@ -22,24 +23,48 @@
       <table id="course-table" class="d-none" count="{{table.body|length}}">
         <thead>
           <tr>
-            {% block key %}
-            {% endblock %}
+            <th scope="col" class="col_code">
+              <span class="th-text">Code</span>
+            </th>
 
             <th class="col_name">
               <span class="th-text">Class</span>
             </th>
 
-
-            <th class="col_{{attribute}}"> <!-- for attribute in reviews|columns -->
-              <span class="th-text">attribute|reviewbit</span>
+          {% for attribute in review_columns  %}
+            <th class="col_{{attribute}}">
+              <span class="th-text">{{attribute}}</span>
             </th>
-
+            {% endfor %}
           <th class="col_section">Section</th>
           </tr>
         </thead>
         <tbody>
-          {% block body %}
-          {% endblock %}
+
+  {% for coursehistory in courses %}
+      <tr id="row_display_{{forloop.counter0}}" class="row_display">
+          <td class="col_code">
+              <a href="{% url "course" coursehistory.course_set.first.primary_alias.course_code %}">
+                  {{coursehistory.course_set.first.primary_alias.course_code}}
+              </a>
+          </td>
+          {% with all_cols=review_columns reviews=group.list %}
+          <td class="col_name">
+             {{coursehistory.course_set.first.name}}
+          </td>
+
+          {% for attribute in review_columns %}
+          <td class="col_{{attribute}}">
+              <span class="cell_average">{{coursehistory.course_set.all|average:attribute|floatformat:2}}</span>
+              <span class="cell_recent">{{coursehistory.course_set.all|average:attribute|floatformat:2}}</span>
+          </td>
+          {% endfor %}
+
+          <td class="col_section"></td>
+      </tr>
+
+  {% endwith %}
+{% endfor %}
         </tbody>
       </table>
     </div>

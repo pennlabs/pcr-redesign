@@ -1,0 +1,14 @@
+python3 ./manage.py shell_plus
+Department.objects.create(code="ECON", name="Economics")
+econ = Department.objects.get(code="ECON")
+saka = Instructor.objects.create(first_name="gizem", last_name="saka")
+finance = Course.objects.first()
+fin = Section.objects.create(course=finance, name="Financial Accounting", sectionnum=1)
+fin.instructors.add(saka)
+finance.sections.add(fin)
+r = Review.objects.create(section=fin, instructor=saka, forms_returned=0, forms_produced=0, form_type=0, comments="this is a comment for this review")
+rbit = ReviewBit.objects.create(review=r, field="CourseQuality", score=3.6)
+h = CourseHistory.objects.create(notes="i learned a lot from this financial accounting course")
+fin.history = h
+fin.save()
+Alias.objects.create(course=finance, department=econ, coursenum=1)
