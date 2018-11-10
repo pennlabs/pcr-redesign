@@ -3,7 +3,7 @@ import sqlparse
 import re
 
 from django.core.management.base import BaseCommand, CommandError
-from apps.courses.models import Course, Alias, Department, Instructor
+from apps.courses.models import Course, Alias, Department, Instructor, SemesterField, CourseHistory
 
 
 class Command(BaseCommand):
@@ -15,6 +15,7 @@ class Command(BaseCommand):
         self.crosslistings = []
         self.ratings = []
         self.summaries = []
+        self.course_descs = []
 
     def add_arguments(self, parser):
         parser.add_argument("path", nargs="+", help="The path where the ISC SQL files are located.")
@@ -24,11 +25,13 @@ class Command(BaseCommand):
         if not os.path.isdir(src):
             raise CommandError("The directory '{}' does not exist!".format(src))
         self.courses = self.parse(src, "TEST_PCR_COURSE_DESC_V.sql")
-        self.crosslistings = self.parse(src, "TEST_PCR_CROSSLIST_SUMMARY_V.sql")
+        self.course_descs = self.get_descs()
+        #self.crosslistings = self.parse(src, "TEST_PCR_CROSSLIST_SUMMARY_V.sql")
         self.ratings = self.parse(src, "TEST_PCR_RATING_V.sql")
-        self.summaries = self.parse(src, "TEST_PCR_SUMMARY_V.sql")
-        self.create_departments()
-        self.create_instructors()
+        #self.summaries = self.parse(src, "TEST_PCR_SUMMARY_V.sql")
+        #self.create_departments()
+        #self.create_instructors()
+        self.create_courses()
         self.stdout.write(self.style.SUCCESS('Successfully imported data!'))
 
     def parse(self, src, sql_in):
@@ -62,6 +65,14 @@ class Command(BaseCommand):
 
         return {key: val for key, val in zip(col_list, value_list)}
 
+    def get_descs(self):
+        course_descriptions = {}
+        self.courses = sorted(self.courses, key=lambda entry: entry['PARAGRAPH_NUMBER'])
+        for entry in self.courses:
+            course_descriptions.setdefault(entry['COURSE_ID'], "")
+            course_descriptions[entry['COURSE_ID']] += entry.get('COURSE_DESCRIPTION', "")
+        return course_descriptions
+
     def create_departments(self):
         for dictionary in self.summaries:
             code = dictionary["SUBJECT_CODE"]
@@ -76,9 +87,14 @@ class Command(BaseCommand):
             instructor, _ = Instructor.objects.get_or_create(first_name=first_name, last_name=last_name)
         print(Instructor.objects.all())
 
-    def populate_models(self):
-        for course, entries in self.courses:
-            entries.sort()
-            desc = ""
-            for num, paragraph in entries:
-                desc += paragraph + "\n"
+    def create_courses(self):
+        for dictionary in self.ratings:
+            term = dictionary.get('TERM_SESSION') or dictionary.get('TERM')
+            semester = SemesterField(term)
+            course_code = dictionary['SECTION_DIVISION'][:-3]
+            description = self.course_descs.get(course_code)
+            alias = Alias.get_or_create()
+            # create course without history or alias
+            # then make second pass where you fill in the aliases and histories
+            history = CourseHistory.objects.get_or_create(course_code)
+            CourseHistory.get_or_create(course__primary_alias=alias)
